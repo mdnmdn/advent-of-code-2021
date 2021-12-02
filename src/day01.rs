@@ -1,32 +1,33 @@
 use std::fs::read_to_string;
 
 pub fn main() {
+    println!("Day 01");
     let input_file = "assets/day01/input.txt";
     let data = read_to_string(input_file).unwrap();
     //println!("{}", data);
     let parsed_data = parse_file(data);
     //println!("{:?}",parsed_data);
-    println!("Read {} sweeps", parsed_data.len());
+    println!("> Read {} sweeps", parsed_data.len());
     let solution = solve_a(&parsed_data);
-    println!("Found {} descending sweeps", solution);
+    println!("> Found {} descending sweeps", solution);
     let solution = solve_b(&parsed_data);
-    println!("Found {} descending sweeps with mobile average", solution);
+    println!("> Found {} descending sweeps with mobile average", solution);
 }
 
 fn parse_file(raw_data: String) -> Vec<i32> {
     raw_data
-        .split("\n")
+        .split('\n')
         .map(|s| s.parse::<i32>().unwrap())
         .collect()
 }
 
-fn solve_a(data: &Vec<i32>) -> usize {
+fn solve_a(data: &[i32]) -> usize {
     let mut ahead_iter = data.iter();
     ahead_iter.next();
     ahead_iter.zip(data.iter()).filter(|i| i.0 > i.1).count()
 }
 
-fn solve_b(data: &Vec<i32>) -> usize {
+fn solve_b(data: &[i32]) -> usize {
     #[derive(Debug)]
     struct Acc {
         sliding_values: [i32; 3],
@@ -45,10 +46,10 @@ fn solve_b(data: &Vec<i32>) -> usize {
     let result = data.iter().fold(zero_acc, |mut acc, x| {
         //println!("{:?}", acc);
         acc.sliding_values[acc.position % 3] = *x;
-        acc.position = acc.position + 1;
+        acc.position += 1;
         let sum = acc.sliding_values[0] + acc.sliding_values[1] + acc.sliding_values[2];
         if acc.position > 3 && sum > acc.previous_value {
-            acc.sweeps = acc.sweeps + 1;
+            acc.sweeps += 1;
         }
         acc.previous_value = sum;
 
