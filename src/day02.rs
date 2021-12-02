@@ -15,10 +15,7 @@ pub fn main() {
 }
 
 fn parse_file(raw_data: String) -> Vec<String> {
-    raw_data
-        .split('\n')
-        .map(|s| s.to_string())
-        .collect()
+    raw_data.split('\n').map(|s| s.to_string()).collect()
 }
 
 fn solve_a(data: &[String]) -> u32 {
@@ -36,12 +33,12 @@ fn solve_a(data: &[String]) -> u32 {
         .iter()
         .map(|s| s.split_terminator(char::is_whitespace))
         .map(|mut s| (s.next().unwrap(), s.next().unwrap().parse::<u32>().unwrap()))
-        .fold(acc_zero, |mut acc, v:(&str, u32)| {
+        .fold(acc_zero, |mut acc, v: (&str, u32)| {
             match v.0 {
                 "forward" => acc.distance += v.1,
                 "down" => acc.depth += v.1,
                 "up" => acc.depth -= v.1,
-                _ => {},
+                _ => {}
             }
             acc
         });
@@ -67,15 +64,15 @@ fn solve_b(data: &[String]) -> u32 {
         .iter()
         .map(|s| s.split_terminator(' '))
         .map(|mut s| (s.next().unwrap(), s.next().unwrap().parse::<u32>().unwrap()))
-        .fold(acc_zero, |mut acc, v:(&str, u32)| {
+        .fold(acc_zero, |mut acc, v: (&str, u32)| {
             match v.0 {
                 "forward" => {
                     acc.distance += v.1;
                     acc.depth += acc.aim * v.1;
-                },
+                }
                 "down" => acc.aim += v.1,
                 "up" => acc.aim -= v.1,
-                _ => {},
+                _ => {}
             }
             //println!("> {:?}  - {:?}", acc,v);
             acc
@@ -83,7 +80,6 @@ fn solve_b(data: &[String]) -> u32 {
 
     result.depth * result.distance
 }
-
 
 #[cfg(test)]
 mod test {
