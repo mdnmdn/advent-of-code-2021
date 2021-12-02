@@ -70,24 +70,24 @@ fn solve_b_with_sliding_iterator(data: &Vec<i32>) -> usize {
 }
 
 //struct SlidingIterator<T ,II = (dyn IntoIterator<Item=T, IntoIter=(dyn Iterator<Item=T>)>), I = <II as IntoIterator>::IntoIter >
-struct SlidingIterator<T , I>
-    where T: Add, I: std::iter::Iterator
+struct SlidingIterator<T>
+    where T: Add + Copy
 
 {
-    base_iterator: I,
+    //base_iterator: IntoIterator<Item=T>::IntoIter,
+    base_iterator: Box<(dyn Iterator<Item=T>)>,
     sliding_values: [Option<T>; 3],
     previous_value: Option<T>,
     position: usize,
     //_phantom_data: std::marker::PhantomData<II>
 }
 
-#[allow(invalid_type_param_default)]
-impl<'a, T, I = <(dyn IntoIterator<IntoIter = (dyn Iterator<Item = T> + 'static), Item = T> + 'static) as IntoIterator>::IntoIter > SlidingIterator<T, I>
-    where T: Add + Copy, I: std::iter::Iterator
+impl<T> SlidingIterator<T>
+    where T: Add + Copy
 {
     fn new<IT>(data :IT) -> Self
         where IT: IntoIterator<Item=T> {
-        let mut base_iterator = data.into_iter();
+        let mut base_iterator = Box::new(data.into_iter());
         let mut sliding_values = [
             base_iterator.next(),
             base_iterator.next(),
@@ -103,8 +103,8 @@ impl<'a, T, I = <(dyn IntoIterator<IntoIter = (dyn Iterator<Item = T> + 'static)
     }
 }
 
-impl<T, I> Iterator for SlidingIterator<T, I>
-    where T: Add + Copy, I: std::iter::Iterator{
+impl<T> Iterator for SlidingIterator<T>
+    where T: Add + Copy {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
