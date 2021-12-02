@@ -1,4 +1,5 @@
-use std::fs::read_to_string;
+use std::{default::Default, fs::read_to_string};
+use std::ops::Add;
 
 pub fn main() {
     println!("Day 01");
@@ -58,6 +59,70 @@ fn solve_b(data: &[i32]) -> usize {
     result.sweeps
 }
 
+// ------------- WITH SLIDING ITERATOR -----------------
+
+fn solve_b_with_sliding_iterator(data: &Vec<i32>) -> usize {
+    let mut ahead_iter = SlidingIterator::new(data);
+    ahead_iter.next();
+    ahead_iter.zip(SlidingIterator::new(data))
+        .filter(|i| i.0 > i.1)
+        .count()
+}
+
+//struct SlidingIterator<T ,II = (dyn IntoIterator<Item=T, IntoIter=(dyn Iterator<Item=T>)>), I = <II as IntoIterator>::IntoIter >
+struct SlidingIterator<T , I>
+    where T: Add, I: std::iter::Iterator
+
+{
+    base_iterator: I,
+    sliding_values: [Option<T>; 3],
+    previous_value: Option<T>,
+    position: usize,
+    //_phantom_data: std::marker::PhantomData<II>
+}
+
+#[allow(invalid_type_param_default)]
+impl<'a, T, I = <(dyn IntoIterator<IntoIter = (dyn Iterator<Item = T> + 'static), Item = T> + 'static) as IntoIterator>::IntoIter > SlidingIterator<T, I>
+    where T: Add + Copy, I: std::iter::Iterator
+{
+    fn new<IT>(data :IT) -> Self
+        where IT: IntoIterator<Item=T> {
+        let mut base_iterator = data.into_iter();
+        let mut sliding_values = [
+            base_iterator.next(),
+            base_iterator.next(),
+            None,
+        ];
+
+        SlidingIterator {
+            base_iterator: base_iterator,
+            sliding_values,
+            previous_value: None,
+            position: 3,
+        }
+    }
+}
+
+impl<T, I> Iterator for SlidingIterator<T, I>
+    where T: Add + Copy, I: std::iter::Iterator{
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.base_iterator.next() {
+            Some(v) => {
+                self.position = self.position + 1;
+                self.sliding_values[self.position % 3] = v;
+                let sum = self.sliding_values[0].unwrap()
+                        .add(self.sliding_values[1].unwrap())
+                        .add(self.sliding_values[2].unwrap());
+                self.previous_value = Some(sum);
+                Some(sum)
+            },
+            _ => None,
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -77,6 +142,13 @@ mod test {
     fn test_solve_b() {
         let data = get_test_data();
         let solution = solve_b(&data);
+        assert_eq!(5, solution);
+    }
+
+    #[test]
+    fn test_solve_b_sliding_iterator() {
+        let data = get_test_data();
+        let solution = solve_b_with_sliding_iterator(&data);
         assert_eq!(5, solution);
     }
 }
