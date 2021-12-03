@@ -76,17 +76,14 @@ fn solve_b_with_sliding_iterator(data: &[i32]) -> usize {
         .count()
 }
 
-//struct SlidingIterator<T ,II = (dyn IntoIterator<Item=T, IntoIter=(dyn Iterator<Item=T>)>), I = <II as IntoIterator>::IntoIter >
 struct SlidingIterator<'a, T>
 where
     T: Add + Copy,
 {
-    //base_iterator: IntoIterator<Item=T>::IntoIter,
     base_iterator: Iter<'a, T>,
     sliding_values: [Option<&'a T>; 3],
     previous_value: Option<T>,
     position: usize,
-    //_phantom_data: std::marker::PhantomData<II>
 }
 
 impl<'a, T> SlidingIterator<'a, T>
