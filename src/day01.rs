@@ -1,4 +1,4 @@
-use std::{default::Default, fs::read_to_string};
+use std::{fs::read_to_string};
 use std::ops::Add;
 
 pub fn main() {
@@ -70,24 +70,24 @@ fn solve_b_with_sliding_iterator(data: &Vec<i32>) -> usize {
 }
 
 //struct SlidingIterator<T ,II = (dyn IntoIterator<Item=T, IntoIter=(dyn Iterator<Item=T>)>), I = <II as IntoIterator>::IntoIter >
-struct SlidingIterator<T>
+struct SlidingIterator<'a, T>
     where T: Add + Copy
 
 {
     //base_iterator: IntoIterator<Item=T>::IntoIter,
-    base_iterator: Box<(dyn Iterator<Item=T>)>,
+    base_iterator: &'a dyn Iterator<Item=T>,
     sliding_values: [Option<T>; 3],
     previous_value: Option<T>,
     position: usize,
     //_phantom_data: std::marker::PhantomData<II>
 }
 
-impl<T> SlidingIterator<T>
+impl<'a, T> SlidingIterator<'a, T>
     where T: Add + Copy
 {
-    fn new<IT>(data :IT) -> Self
-        where IT: IntoIterator<Item=T> {
-        let mut base_iterator = Box::new(data.into_iter());
+    fn new<IT>(data :&IT) -> Self
+        where IT: IntoIterator<Item=T> , <IT as IntoIterator>::IntoIter: 'a {
+        let mut base_iterator = data.into_iter();
         let mut sliding_values = [
             base_iterator.next(),
             base_iterator.next(),
@@ -95,7 +95,7 @@ impl<T> SlidingIterator<T>
         ];
 
         SlidingIterator {
-            base_iterator: base_iterator,
+            base_iterator: & base_iterator,
             sliding_values,
             previous_value: None,
             position: 3,
@@ -103,18 +103,19 @@ impl<T> SlidingIterator<T>
     }
 }
 
-impl<T> Iterator for SlidingIterator<T>
-    where T: Add + Copy {
+impl<'a, T> Iterator for SlidingIterator<'a, T>
+    where T: Add + Copy, T: Add<Output=T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.base_iterator.next() {
             Some(v) => {
                 self.position = self.position + 1;
-                self.sliding_values[self.position % 3] = v;
-                let sum = self.sliding_values[0].unwrap()
-                        .add(self.sliding_values[1].unwrap())
-                        .add(self.sliding_values[2].unwrap());
+                self.sliding_values[self.position % 3] = Some(v);
+                let mut sum = self.sliding_values[0].unwrap()
+                        .add(self.sliding_values[1].unwrap());
+                        //.add(self.sliding_values[2].unwrap());
+
                 self.previous_value = Some(sum);
                 Some(sum)
             },
