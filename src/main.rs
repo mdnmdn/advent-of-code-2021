@@ -13,6 +13,7 @@ struct Options {
 enum AocDays {
     Day01,
     Day02,
+    Day03,
 }
 
 fn main() {
@@ -20,5 +21,6 @@ fn main() {
     match opts.day {
         AocDays::Day01 => day01::main(),
         AocDays::Day02 => day02::main(),
+        AocDays::Day03 => day03::main(),
     };
 }
