@@ -1,5 +1,6 @@
-use std::{fs::read_to_string};
+use std::fs::read_to_string;
 use std::ops::Add;
+use std::slice::Iter;
 
 pub fn main() {
     println!("Day 01");
@@ -13,6 +14,11 @@ pub fn main() {
     println!("> Found {} descending sweeps", solution);
     let solution = solve_b(&parsed_data);
     println!("> Found {} descending sweeps with mobile average", solution);
+    let solution = solve_b_with_sliding_iterator(&parsed_data);
+    println!(
+        "> Found {} descending sweeps with sliding window iterator",
+        solution
+    );
 }
 
 fn parse_file(raw_data: String) -> Vec<i32> {
@@ -61,64 +67,65 @@ fn solve_b(data: &[i32]) -> usize {
 
 // ------------- WITH SLIDING ITERATOR -----------------
 
-fn solve_b_with_sliding_iterator(data: &Vec<i32>) -> usize {
+fn solve_b_with_sliding_iterator(data: &[i32]) -> usize {
     let mut ahead_iter = SlidingIterator::new(data);
     ahead_iter.next();
-    ahead_iter.zip(SlidingIterator::new(data))
+    ahead_iter
+        .zip(SlidingIterator::new(data))
         .filter(|i| i.0 > i.1)
         .count()
 }
 
 //struct SlidingIterator<T ,II = (dyn IntoIterator<Item=T, IntoIter=(dyn Iterator<Item=T>)>), I = <II as IntoIterator>::IntoIter >
 struct SlidingIterator<'a, T>
-    where T: Add + Copy
-
+where
+    T: Add + Copy,
 {
     //base_iterator: IntoIterator<Item=T>::IntoIter,
-    base_iterator: &'a dyn Iterator<Item=T>,
-    sliding_values: [Option<T>; 3],
+    base_iterator: Iter<'a, T>,
+    sliding_values: [Option<&'a T>; 3],
     previous_value: Option<T>,
     position: usize,
     //_phantom_data: std::marker::PhantomData<II>
 }
 
 impl<'a, T> SlidingIterator<'a, T>
-    where T: Add + Copy
+where
+    T: Add + Copy,
 {
-    fn new<IT>(data :&IT) -> Self
-        where IT: IntoIterator<Item=T> , <IT as IntoIterator>::IntoIter: 'a {
-        let mut base_iterator = data.into_iter();
-        let mut sliding_values = [
-            base_iterator.next(),
-            base_iterator.next(),
-            None,
-        ];
+    fn new(data: &'a [T]) -> Self {
+        let mut base_iterator = data.iter();
+        let sliding_values = [base_iterator.next(), base_iterator.next(), None];
 
         SlidingIterator {
-            base_iterator: & base_iterator,
+            base_iterator,
             sliding_values,
             previous_value: None,
-            position: 3,
+            position: 1,
         }
     }
 }
 
 impl<'a, T> Iterator for SlidingIterator<'a, T>
-    where T: Add + Copy, T: Add<Output=T> {
+where
+    T: Add + Copy + Default,
+    T: Add<Output = T>,
+{
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.base_iterator.next() {
             Some(v) => {
-                self.position = self.position + 1;
+                self.position += 1;
                 self.sliding_values[self.position % 3] = Some(v);
-                let mut sum = self.sliding_values[0].unwrap()
-                        .add(self.sliding_values[1].unwrap());
-                        //.add(self.sliding_values[2].unwrap());
+                let sum = self.sliding_values[0]
+                    .unwrap()
+                    .add(*self.sliding_values[1].unwrap())
+                    .add(*self.sliding_values[2].unwrap());
 
                 self.previous_value = Some(sum);
                 Some(sum)
-            },
+            }
             _ => None,
         }
     }
