@@ -1,6 +1,5 @@
-use clap::{Parser, Subcommand};
-
 use aoc::*;
+use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[clap(name = "aoc")]
