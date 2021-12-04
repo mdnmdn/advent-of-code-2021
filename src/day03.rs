@@ -130,9 +130,8 @@ fn filter_codes(codes: Vec<&str>, pos: usize, val: char) -> Vec<&str> {
         codes
     } else {
         codes
-            .iter()
-            .filter(|c| c.chars().nth(pos).unwrap() == val)
-            .map(|s| *s)
+            .into_iter()
+            .filter(|&c| c.chars().nth(pos).unwrap() == val)
             .collect()
     }
 }
