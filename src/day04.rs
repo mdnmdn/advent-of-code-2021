@@ -8,7 +8,7 @@ pub fn main() {
     let data = read_to_string(input_file).unwrap();
     let mut bingo = Bingo::default();
     bingo.parse_data(&data);
-    println!("{:?}",bingo.boards[53]);
+    println!("{:?}", bingo.boards[53]);
     //println!("> Read {} reports lines", parsed_data.len());
     let solution = solve_a(bingo);
     println!("> first winning score {}", solution);
@@ -29,7 +29,7 @@ struct Bingo {
 
 #[derive(Default, Debug)]
 struct Board {
-    numbers: [[u32;5]; 5],
+    numbers: [[u32; 5]; 5],
     rows_and_columns: [HashSet<u32>; 10],
     total_sum: u32,
     extracted_sum: u32,
@@ -37,14 +37,16 @@ struct Board {
 }
 
 struct ExtractionResult<'a> {
-    extracted_number :u32,
+    extracted_number: u32,
     winner_board: Option<&'a Board>,
 }
 
 impl Bingo {
     fn parse_data(&mut self, raw_data: &str) {
         let mut lines = raw_data.split('\n');
-        self.extractions = lines.next().unwrap()
+        self.extractions = lines
+            .next()
+            .unwrap()
             .split(',')
             .map(|s| s.trim().parse::<u32>().unwrap())
             .collect();
@@ -62,7 +64,7 @@ impl Bingo {
                             board.rows_and_columns[i].insert(v);
                             board.numbers[i][col] = v;
                             col += 1;
-                    });
+                        });
                 } else {
                     break;
                 }
@@ -71,10 +73,10 @@ impl Bingo {
                 break;
             }
             lines.next();
-            for r  in 0..5 {
+            for r in 0..5 {
                 for c in 0..5 {
                     let val = board.numbers[r][c];
-                    board.rows_and_columns[5+c].insert(val);
+                    board.rows_and_columns[5 + c].insert(val);
                     //println!("{}x{} {}",r,c, val);
                 }
             }
@@ -85,7 +87,6 @@ impl Bingo {
     fn extract_number(&mut self) -> ExtractionResult {
         let extracted_number = *self.extractions.get(self.current_extraction).unwrap();
         self.current_extraction += 1;
-
 
         let mut winner_board_idx = None;
         //println!("---> Extracted {}", extracted_number);
@@ -101,7 +102,6 @@ impl Bingo {
                     //println!("------> {:?}", board.rows_and_columns[i]);
                     found = true;
                     board.rows_and_columns[i].remove(&extracted_number);
-
                 }
                 if board.rows_and_columns[i].is_empty() {
                     winner_board_idx = Some(board_idx);
@@ -134,10 +134,9 @@ fn solve_a(bingo: Bingo) -> u32 {
     }
 }
 
-
 fn solve_b(bingo: Bingo) -> u32 {
     let mut bingo = bingo;
-    let mut last_score= 0;
+    let mut last_score = 0;
     for _ in 0..bingo.extractions.len() {
         let extraction = bingo.extract_number();
         if let Some(board) = extraction.winner_board {
@@ -170,5 +169,4 @@ mod test {
         let solution = solve_b(bingo);
         assert_eq!(1924, solution);
     }
-
 }

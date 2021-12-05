@@ -78,7 +78,7 @@ fn solve_b(data: &[&str]) -> u32 {
                     co2 += 1;
                 }
                 '1'
-            },
+            }
             _ => {
                 if co2_codes.len() == 1 {
                     co2 += 1;

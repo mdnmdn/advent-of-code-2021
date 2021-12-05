@@ -14,6 +14,7 @@ enum AocDays {
     Day02,
     Day03,
     Day04,
+    Day05,
 }
 
 fn main() {
@@ -23,5 +24,6 @@ fn main() {
         AocDays::Day02 => day02::main(),
         AocDays::Day03 => day03::main(),
         AocDays::Day04 => day04::main(),
+        AocDays::Day05 => day05::main(),
     };
 }

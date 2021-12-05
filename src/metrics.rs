@@ -31,8 +31,6 @@ pub struct AllocatorCounter {
     start_value: usize,
 }
 impl AllocatorCounter {
-
-
     pub fn reset(&mut self) -> usize {
         let start = self.start_value;
         self.start_value = count_allocations();
@@ -48,7 +46,9 @@ impl AllocatorCounter {
     }
 
     pub fn measure<F, R>(&self, func: F) -> MeasureResult<R>
-        where F: FnOnce() -> R {
+    where
+        F: FnOnce() -> R,
+    {
         let start = count_allocations();
         let result = func();
         let allocations = count_allocations() - start;
@@ -70,5 +70,4 @@ impl Default for AllocatorCounter {
             start_value: count_allocations(),
         }
     }
-
 }
