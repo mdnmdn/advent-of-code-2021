@@ -130,12 +130,8 @@ fn solve(data: &[&str], mode: CoordinateMode) -> i32 {
         .flat_map(|v| v.into_iter(mode))
         .fold(map, |mut m, p| {
             let key: i32 = p.x * 10000 + p.y;
-
-            if let Some(val) = m.get_mut(&key) {
-                *val += 1;
-            } else {
-                m.insert(key, 1);
-            }
+            let val = m.entry(key).or_default();
+            *val += 1;
             m
         })
         .iter()
