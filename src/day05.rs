@@ -28,7 +28,7 @@ enum CoordinateMode {
 }
 
 impl HydrotermalVent {
-    fn iter(&self, mode: CoordinateMode) -> CoordinateIterator {
+    fn into_iter(self, mode: CoordinateMode) -> CoordinateIterator {
         CoordinateIterator {
             vent: self,
             pos: 0,
@@ -69,13 +69,13 @@ impl FromStr for Point {
     }
 }
 
-struct CoordinateIterator<'a> {
-    vent: &'a HydrotermalVent,
+struct CoordinateIterator {
+    vent: HydrotermalVent,
     pos: i32,
     mode: CoordinateMode,
 }
 
-impl<'a> Iterator for CoordinateIterator<'a> {
+impl Iterator for CoordinateIterator {
     type Item = Point;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -124,28 +124,20 @@ fn solve_b(data: &[&str]) -> i32 {
 fn solve(data: &[&str], mode: CoordinateMode) -> i32 {
     let map: HashMap<i32, i32> = HashMap::new();
 
-    let vents: Vec<HydrotermalVent> = data
-        .iter()
+    data.iter()
         .map(|s| HydrotermalVent::from_str(s).unwrap())
-        .collect();
+        .into_iter()
+        .flat_map(|v| v.into_iter(mode))
+        .fold(map, |mut m, p| {
+            let key: i32 = p.x * 10000 + p.y;
 
-    let result: HashMap<i32, i32> =
-        vents
-            .iter()
-            .flat_map(|v| v.iter(mode))
-            .fold(map, |mut m, p| {
-                let key: i32 = p.x * 10000 + p.y;
-
-                if let Some(val) = m.get_mut(&key) {
-                    *val += 1;
-                } else {
-                    m.insert(key, 1);
-                }
-                m
-            });
-
-    // println!(" > {:?}", result );
-    result
+            if let Some(val) = m.get_mut(&key) {
+                *val += 1;
+            } else {
+                m.insert(key, 1);
+            }
+            m
+        })
         .iter()
         .fold(0, |total, e| if *e.1 > 1 { total + 1 } else { total })
 }
