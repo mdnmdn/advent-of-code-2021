@@ -1,0 +1,19 @@
+ dddd
+e    a
+e    a
+ ffff
+g    b
+g    b
+ cccc
+
+1 - ab
+4 - abef
+7 - abd
+8 - abcdefg
+
+2 - len 5 , match2 4
+3 - len 5 , contains 1
+5 - len 5 , match3 4
+6 - len 6 , not contains 1
+9 - len 6 , contains 4
+0 - len 6 , contains 1, not contains 4
