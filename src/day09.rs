@@ -24,7 +24,7 @@ fn parse_file(raw_data: String) -> Vec<Vec<u32>> {
         .collect()
 }
 
-fn solve_a(data: &Vec<Vec<u32>>) -> u32 {
+fn solve_a(data: &[Vec<u32>]) -> u32 {
     let mut res: u32 = 0;
     let (width, height) = (data[0].len(), data.len());
     for (r_pos, row) in data.iter().enumerate() {
@@ -48,7 +48,7 @@ fn solve_a(data: &Vec<Vec<u32>>) -> u32 {
     res
 }
 
-fn solve_b(data: &Vec<Vec<u32>>) -> u32 {
+fn solve_b(data: &[Vec<u32>]) -> u32 {
     //let (width, height) = (data[0].len(), data.len());
 
     #[derive(Default, Debug)]
@@ -93,7 +93,7 @@ fn solve_b(data: &Vec<Vec<u32>>) -> u32 {
                     }
                 }
             }
-            if let None = current_basin {
+            if current_basin.is_some() {
                 current_basin = Some(registry.next_basin);
                 registry.next_basin += 1;
             }
@@ -113,7 +113,7 @@ fn solve_b(data: &Vec<Vec<u32>>) -> u32 {
 
     registry.connected_basins.iter().for_each(|(k, v)| {
         println!(" > {} -> {}", k, v);
-        let root_basin = find_fist_basin(&registry.connected_basins, &v);
+        let root_basin = find_fist_basin(&registry.connected_basins, v);
         connections.insert(*k, root_basin);
         let weight_to_relocate = *registry.basins_weight.get(k).unwrap();
         let weight = registry.basins_weight.get_mut(&root_basin).unwrap();
@@ -143,14 +143,14 @@ fn solve_b(data: &Vec<Vec<u32>>) -> u32 {
 fn find_fist_basin(connections: &HashMap<u32, u32>, basin: &u32) -> u32 {
     let mut dest = basin;
 
-    while let Some(new_basin) = connections.get(&dest) {
+    while let Some(new_basin) = connections.get(dest) {
         dest = new_basin;
     }
     *dest
 }
 
 fn print_map(
-    map: &Vec<Vec<Option<u32>>>,
+    map: &[Vec<Option<u32>>],
     connections: &HashMap<u32, u32>,
     weights: &HashMap<u32, u32>,
 ) {
@@ -166,7 +166,6 @@ fn print_map(
                 print!("   ");
             }
         }
-        println!("");
     }
     println!("----------------------------\n\n\n");
 }
