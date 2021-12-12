@@ -9,7 +9,9 @@ pub fn main() {
     println!("> Error points {}", solution);
 }
 
-fn solve_a(_data: &[&str]) -> u32 {}
+fn solve_a(_data: &[&str]) -> u32 {
+    0
+}
 
 #[cfg(test)]
 mod test {
