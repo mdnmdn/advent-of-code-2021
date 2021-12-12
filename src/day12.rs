@@ -15,23 +15,23 @@ fn solve_a(_data: &[&str]) -> u32 {
 
 #[cfg(test)]
 mod test {
-//    use super::*;
+    //    use super::*;
 
-//    #[test]
-//    fn test_solve_a_1() {
-//        let data = read_to_string("assets/day12/input_sample_01.txt").unwrap();
-//
-//        let data: Vec<&str> = data.split('\n').collect();
-//        let solution = solve_a(&data);
-//        assert_eq!(19, solution);
-//    }
-//
-//    #[test]
-//    fn test_solve_a_2() {
-//        let data = read_to_string("assets/day12/input_sample_02.txt").unwrap();
-//
-//        let data: Vec<&str> = data.split('\n').collect();
-//        let solution = solve_a(&data);
-//        assert_eq!(226, solution);
-//    }
+    //    #[test]
+    //    fn test_solve_a_1() {
+    //        let data = read_to_string("assets/day12/input_sample_01.txt").unwrap();
+    //
+    //        let data: Vec<&str> = data.split('\n').collect();
+    //        let solution = solve_a(&data);
+    //        assert_eq!(19, solution);
+    //    }
+    //
+    //    #[test]
+    //    fn test_solve_a_2() {
+    //        let data = read_to_string("assets/day12/input_sample_02.txt").unwrap();
+    //
+    //        let data: Vec<&str> = data.split('\n').collect();
+    //        let solution = solve_a(&data);
+    //        assert_eq!(226, solution);
+    //    }
 }

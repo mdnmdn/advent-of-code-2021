@@ -57,7 +57,6 @@ struct BasinRegistry<'a> {
 
 impl<'a> BasinRegistry<'a> {
     fn new(map: &'a [Vec<u32>]) -> Self {
-
         let mut result = BasinRegistry {
             basins_weight: HashMap::default(),
             basin_map: Vec::default(),
@@ -66,9 +65,9 @@ impl<'a> BasinRegistry<'a> {
         let (width, height) = (map[0].len(), map.len());
 
         (0..height).into_iter().for_each(|_| {
-            result.basin_map.push(
-                (0..width).into_iter().map(|_| None).collect()
-            );
+            result
+                .basin_map
+                .push((0..width).into_iter().map(|_| None).collect());
         });
 
         result
@@ -76,9 +75,9 @@ impl<'a> BasinRegistry<'a> {
 
     fn explore(&mut self, x: usize, y: usize) -> u32 {
         let basin_val = self.basin_map.get(x).unwrap().get(y).unwrap();
-        if basin_val.is_none()  {
+        if basin_val.is_none() {
             let new_basin = self.basins_weight.len() as u32;
-            println!("explore({}, {}, {}) ",x, y, new_basin);
+            println!("explore({}, {}, {}) ", x, y, new_basin);
             let weight = self.visit(x, y, &new_basin);
             self.basins_weight.insert(new_basin, weight);
             weight
@@ -88,13 +87,15 @@ impl<'a> BasinRegistry<'a> {
     }
 
     fn visit(&mut self, x: usize, y: usize, basin: &u32) -> u32 {
-        println!("visit({}, {}, {}) ",x, y, basin);
+        println!("visit({}, {}, {}) ", x, y, basin);
         if let Some(Some(v)) = self.basin_map.get(x).unwrap().get(y) {
             if *v == *basin {
                 return 0;
             } else {
-                panic!("Error: visiting: {},{} for basin {}, but is already occupied by {} ",
-                    x, y, *basin, *v);
+                panic!(
+                    "Error: visiting: {},{} for basin {}, but is already occupied by {} ",
+                    x, y, *basin, *v
+                );
             }
         }
 
@@ -109,7 +110,7 @@ impl<'a> BasinRegistry<'a> {
             weight += self.visit(x - 1, y, basin);
         }
 
-        if x < self.basin_map.len() - 1  {
+        if x < self.basin_map.len() - 1 {
             weight += self.visit(x + 1, y, basin);
         }
 
@@ -117,14 +118,13 @@ impl<'a> BasinRegistry<'a> {
             weight += self.visit(x, y - 1, basin);
         }
 
-        if y < width - 1  {
+        if y < width - 1 {
             weight += self.visit(x, y + 1, basin);
         }
 
         weight
     }
 }
-
 
 fn solve_b(data: &[Vec<u32>]) -> u32 {
     let mut registry = BasinRegistry::new(data);
@@ -153,11 +153,7 @@ fn solve_b(data: &[Vec<u32>]) -> u32 {
     })
 }
 
-
-fn print_map(
-    map: &[Vec<Option<u32>>],
-    _weights: &HashMap<u32, u32>,
-) {
+fn print_map(map: &[Vec<Option<u32>>], _weights: &HashMap<u32, u32>) {
     println!("\n\n\n\n----------------------------");
     for r in map {
         for v in r {

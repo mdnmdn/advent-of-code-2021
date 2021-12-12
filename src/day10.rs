@@ -109,9 +109,16 @@ mod test {
     #[test]
     fn test_solve_a() {
         let data = read_to_string("assets/day10/input_sample.txt").unwrap();
-
         let data: Vec<&str> = data.split('\n').collect();
         let solution = solve_a(&data);
         assert_eq!(26397, solution);
     }
+
+    //    #[test]
+    //    fn test_solve_b() {
+    //        let data = read_to_string("assets/day10/input_sample.txt").unwrap();
+    //        let data: Vec<&str> = data.split('\n').collect();
+    //        let solution = solve_b(&data);
+    //        assert_eq!(288957, solution);
+    //    }
 }
