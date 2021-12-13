@@ -135,13 +135,18 @@ fn solve_a(data: &[Vec<u32>]) -> u32 {
 fn solve_b(data: &[Vec<u32>]) -> u32 {
     let mut grid = OctopusGrid::new(data);
     //grid.dump();
-
+    let mut _iter = 1;
     loop {
         if grid.tick() == grid.grid.len() {
             break;
         }
+        //println!("\n\n\n > Iter {} flash {}", _iter, grid.flash_counter);
+        //grid.dump();
+        //_iter += 1;
     }
 
+    //println!("\n\n\n > Iter {} flash {}", _iter, grid.flash_counter);
+    //grid.dump();
     grid.generation
 }
 
